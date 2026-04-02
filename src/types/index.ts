@@ -4,6 +4,7 @@ export interface IApi {
     get<T extends object>(uri: string): Promise<T>;
     post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
+<<<<<<< HEAD
 
 export interface IProduct {
   id: string;
@@ -46,3 +47,5 @@ export interface IOrderResponse {
   total: number; // сумма заказа
 }
 
+=======
+>>>>>>> origin/main

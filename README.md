@@ -98,6 +98,7 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+<<<<<<< HEAD
 # Данные
 interface IProduct {
   id: string;
@@ -416,3 +417,5 @@ type ValidationErrors = {
 Методы:
 getProducts(): Promise<IProduct[]> — выполняет GET‑запрос к /product/, возвращает массив товаров.
 sendOrder(orderData: IOrderRequest): Promise<IOrderResponse> — выполняет POST‑запрос к /order/, отправляет данные заказа, возвращает подтверждение.
+=======
+>>>>>>> origin/main
