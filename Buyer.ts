@@ -1,25 +1,4 @@
-interface IProduct {
-  id: string;
-  description: string;
-  image: string;
-  title: string;
-  category: string;
-  price: number | null;
-}
-
-
-
-
-interface IBuyer {
-  payment: TPayment;
-  email: string;
-  phone: string;
-  address: string;
-}
-type TPayment = 'card' | 'cash' | ''
-
-
-
+import {IProduct, IBuyer, TPayment} from '../weblarek/src/types/index'
 
 type ValidationErrors = {
   payment: string;
@@ -29,7 +8,7 @@ type ValidationErrors = {
 };
 
 
-class Buyer {
+export class Buyer {
     payment: TPayment = '';
     email: string = '';
     phone: string = '';
@@ -88,3 +67,4 @@ class Buyer {
     return obj
   }
 }
+

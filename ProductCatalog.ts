@@ -1,6 +1,6 @@
+import {IProduct} from '../weblarek/src/types/index'
 
-
-class ProductCatalog {
+export class ProductCatalog {
     products: IProduct[] = []
     selectedProduct: IProduct | null = null
     constructor() {}
