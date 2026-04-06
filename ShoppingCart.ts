@@ -2,7 +2,7 @@ import {IProduct} from '../weblarek/src/types/index'
 
 
 export class ShoppingCart {
-    items: IProduct[] = []
+    private items: IProduct[] = []
     constructor() {}
     getItems(): IProduct[] {
         return this.items
@@ -21,13 +21,13 @@ export class ShoppingCart {
     getPrice(): number {
         let totalPrice: number = 0;
 
-        if (!this.items) {
+        if (this.items.length === 0) {
             return totalPrice;
         }
 
         for (let i = 0; i < this.items.length; i++) {
             const item = this.items[i];
-            if (item && item.price != null && typeof item.price === 'number') {
+            if (item && item.price != null) {
             totalPrice += item.price;
             }
         }

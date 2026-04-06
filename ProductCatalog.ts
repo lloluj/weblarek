@@ -1,8 +1,8 @@
 import {IProduct} from '../weblarek/src/types/index'
 
 export class ProductCatalog {
-    products: IProduct[] = []
-    selectedProduct: IProduct | null = null
+    private products: IProduct[] = []
+    private selectedProduct: IProduct | null = null
     constructor() {}
     setItems(items: IProduct[]): void {
         this.products = items

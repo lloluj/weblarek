@@ -1,8 +1,23 @@
 import './scss/styles.scss';
+import { IProductsResponse, IOrderRequest, IOrderResponse, IProduct, IApi } from '../src/types/index.ts';
 import { apiProducts } from "./utils/data";
 import { ProductCatalog } from '../ProductCatalog'
 import { Buyer } from '../Buyer'
 import { ShoppingCart } from '../ShoppingCart'
+import { ApiService } from "../Api.ts";
+const apiService = new ApiService({
+  async get<T>(url: string): Promise<T> {
+    console.warn('Mock API: get() called for', url);
+    if (url === '/product/') {
+      return { items: apiProducts.items } as T;
+    }
+    throw new Error(`Unknown endpoint: ${url}`);
+  },
+  async post<T>(url: string, data: any): Promise<T> {
+    console.warn('Mock API: post() called for', url);
+    throw new Error('POST not implemented in mock');
+  }
+});
 const buyer = new Buyer()
 const shoppingCart = new ShoppingCart()
 const productsModel = new ProductCatalog();
@@ -70,7 +85,7 @@ console.log('Данные покупателя после setBuyerData:', buyer.
 
 
 console.log('Валидация данных покупателя:')
-const validationErrors = buyer.Validate()
+const validationErrors = buyer.validate()
 console.log('Ошибки валидации:', validationErrors)
 
 
@@ -79,4 +94,16 @@ console.log('Ошибки валидации:', validationErrors)
 console.log('Очистка данных покупателя:')
 buyer.clearData()
 console.log('Данные покупателя после очистки:', buyer.getData())
-console.log('Ошибки после очистки:', buyer.Validate())
+console.log('Ошибки после очистки:', buyer.validate())
+
+
+
+
+apiService.getProducts()
+  .then((serverProducts: IProduct[]) => {
+    productsModel.setItems(serverProducts);
+    console.log('Массив товаров, полученный с сервера:', productsModel.getItems());
+  })
+  .catch((err: Error) => {
+    console.error('Ошибка при получении данных:', err);
+  });

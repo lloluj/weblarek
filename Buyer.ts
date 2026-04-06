@@ -9,10 +9,10 @@ type ValidationErrors = {
 
 
 export class Buyer {
-    payment: TPayment = '';
-    email: string = '';
-    phone: string = '';
-    address: string = '';
+    private payment: TPayment = '';
+    private email: string = '';
+    private phone: string = '';
+    private address: string = '';
     constructor() {}
     setBuyerData(data: Partial<IBuyer>): void {
     if (data.payment !== undefined) {
@@ -45,7 +45,7 @@ export class Buyer {
 
 
 
-  Validate() : ValidationErrors {
+  validate() : ValidationErrors {
     const obj : ValidationErrors = {
         payment: '',
         email: '',
