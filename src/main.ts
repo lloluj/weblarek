@@ -5,19 +5,57 @@ import { ProductCatalog } from '../ProductCatalog'
 import { Buyer } from '../Buyer'
 import { ShoppingCart } from '../ShoppingCart'
 import { ApiService } from "../Api.ts";
+import { API_URL } from '../src/utils/constants'
+// const apiService = new ApiService({
+//   async get<T>(url: string): Promise<T> {
+//     console.warn('Mock API: get() called for', url);
+//     if (url === '/product/') {
+//       return { items: apiProducts.items } as T;
+//     }
+//     throw new Error(`Unknown endpoint: ${url}`);
+//   },
+//   async post<T>(url: string, data: any): Promise<T> {
+//     console.warn('Mock API: post() called for', url);
+//     throw new Error('POST not implemented in mock');
+//   }
+// });
+
+
 const apiService = new ApiService({
-  async get<T>(url: string): Promise<T> {
-    console.warn('Mock API: get() called for', url);
-    if (url === '/product/') {
-      return { items: apiProducts.items } as T;
+  async get<T>(endpoint: string): Promise<T> {
+    const url = `${API_URL}${endpoint}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    throw new Error(`Unknown endpoint: ${url}`);
+
+    return response.json() as Promise<T>;
   },
-  async post<T>(url: string, data: any): Promise<T> {
-    console.warn('Mock API: post() called for', url);
-    throw new Error('POST not implemented in mock');
+
+  async post<T>(endpoint: string, data: any): Promise<T> {
+    const url = `${API_URL}${endpoint}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json() as Promise<T>;
   }
-});
+})
+
+
+
+
+
+
 const buyer = new Buyer()
 const shoppingCart = new ShoppingCart()
 const productsModel = new ProductCatalog();

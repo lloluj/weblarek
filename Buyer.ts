@@ -1,11 +1,6 @@
 import {IProduct, IBuyer, TPayment} from '../weblarek/src/types/index'
 
-type ValidationErrors = {
-  payment: string;
-  email: string;
-  phone: string;
-  address: string;
-};
+type ValidationErrors = Partial<Record<keyof IBuyer, string>> 
 
 
 export class Buyer {

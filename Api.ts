@@ -1,5 +1,5 @@
 import { IProductsResponse, IOrderRequest, IOrderResponse, IProduct, IApi } from '../weblarek/src/types/index';
-
+import { API_URL } from './src/utils/constants';
 
 export class ApiService {
   private api: IApi;
