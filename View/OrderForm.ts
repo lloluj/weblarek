@@ -43,7 +43,6 @@ export class OrderForm extends Form<OrderData> {
             }
         });
         
-        
         (this.container as any).paymentMethod = method
         this.validate()
     }
@@ -77,6 +76,17 @@ export class OrderForm extends Form<OrderData> {
         });
         (this.container as any).paymentMethod = null
         this.setValid(false);
+    }
+    
+    // Реализация абстрактного метода render
+    render(data?: Partial<OrderData>): HTMLElement {
+        if (data?.address !== undefined) {
+            this.addressInput.value = data.address;
+        }
+        if (data?.payment !== undefined) {
+            this.setPaymentMethod(data.payment);
+        }
+        return this.container;
     }
 }
 
@@ -122,5 +132,16 @@ export class ContactsForm extends Form<OrderData> {
         if (this.emailInput) this.emailInput.value = ''
         if (this.phoneInput) this.phoneInput.value = ''
         this.setValid(false);
+    }
+    
+    // Реализация абстрактного метода render
+    render(data?: Partial<OrderData>): HTMLElement {
+        if (data?.email !== undefined) {
+            this.emailInput.value = data.email;
+        }
+        if (data?.phone !== undefined) {
+            this.phoneInput.value = data.phone;
+        }
+        return this.container;
     }
 }

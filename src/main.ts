@@ -286,6 +286,9 @@ apiService.getProducts()
 
 
 
+import { AppPresenter } from '../View/AppPresenter';
+
+
 
 interface ProductData {
     id: string;
@@ -296,149 +299,179 @@ interface ProductData {
     description: string;
 }
 
-import { ProductCardManager } from '../View/ProductCardManager'
-import { Modal } from '../View/Modal'
-import { Basket } from '../View/Basket'
-import { Header } from '../View/Header'
-import { EventEmitter } from '../src/components/base/Events'
+// Функция для генерации UUID
+function generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🔎 Начинаем инициализацию приложения...')
-    const galleryElement = document.querySelector('.gallery') as HTMLElement
-    const modalElement = document.getElementById('modal-container') as HTMLElement
+    console.log('🔎 Инициализация приложения...');
+
+    // Получаем DOM элементы
+    const headerElement = document.querySelector('.header') as HTMLElement;
+    const galleryElement = document.querySelector('.gallery') as HTMLElement;
+    const modalElement = document.getElementById('modal-container') as HTMLElement;
+
+    // Проверяем наличие необходимых элементов
+    if (!headerElement) {
+        console.error('❌ Элемент .header не найден');
+        return;
+    }
+    if (!galleryElement) {
+        console.error('❌ Элемент .gallery не найден');
+        return;
+    }
+    if (!modalElement) {
+        console.error('❌ Элемент #modal-container не найден');
+        return;
+    }
+
+    // Создаем корзину из шаблона
     const basketTemplate = document.getElementById('basket') as HTMLTemplateElement;
     if (!basketTemplate) {
         console.error('❌ Шаблон #basket не найден в HTML');
         return;
     }
+    
     const basketFragment = document.importNode(basketTemplate.content, true);
     const basketElement = basketFragment.firstElementChild as HTMLElement;
+    
+    if (!basketElement) {
+        console.error('❌ Не удалось создать элемент корзины из шаблона');
+        return;
+    }
+    
+    // НЕ скрываем корзину, так как она будет отображаться в модальном окне
+    // Просто добавляем в DOM
+    document.body.appendChild(basketElement);
+    console.log('✅ Элемент корзины добавлен в DOM');
 
-    const headerElement = document.querySelector('.header') as HTMLElement;
+    // Получаем шаблоны форм
+    const orderTemplate = document.getElementById('order') as HTMLTemplateElement;
+    const contactsTemplate = document.getElementById('contacts') as HTMLTemplateElement;
+    const successTemplate = document.getElementById('success') as HTMLTemplateElement;
 
-    // Диагностика
-    console.log('🔍 Результаты поиска DOM‑элементов:')
-    console.log('• .gallery:', galleryElement ? 'НАЙДЕН' : 'НЕ НАЙДЕН')
-    console.log('• #modal-container:', modalElement ? 'НАЙДЕН' : 'НЕ НАЙДЕН')
-    console.log('• .basket (создан из шаблона):', basketElement ? 'СОЗДАН' : 'ОШИБКА СОЗДАНИЯ')
-    console.log('• .header:', headerElement ? 'НАЙДЕН' : 'НЕ НАЙДЕН')
-
-    if (!galleryElement || !modalElement || !basketElement || !headerElement) {
-        console.error('❌ Не найдены необходимые DOM‑элементы: проверьте разметку HTML');
-        return
+    if (!orderTemplate) {
+        console.error('❌ Шаблон #order не найден');
+        return;
+    }
+    if (!contactsTemplate) {
+        console.error('❌ Шаблон #contacts не найден');
+        return;
+    }
+    if (!successTemplate) {
+        console.error('❌ Шаблон #success не найден');
+        return;
     }
 
-    console.log('✅ Все DOM‑элементы успешно найдены/созданы!');
-
-    const events = new EventEmitter()
-    const modal = new Modal(modalElement)
-    const basket = new Basket(basketElement, modal) // Передаем модальное окно в корзину
-    const header = new Header(events, headerElement)
-
-    const productManager = new ProductCardManager(
+    // Создаем презентер
+    const presenter = new AppPresenter(
+        headerElement,
         galleryElement,
-        modal,
-        basket,
-        header,
-        events
+        modalElement,
+        basketElement,
+        orderTemplate,
+        contactsTemplate,
+        successTemplate
     );
 
+    // Массив товаров для отображения
     const products: ProductData[] = [
         {
-            id: 'product-001',
+            id: generateUUID(),
             title: '+1 час в сутках',
             category: 'софт-скил',
             price: 750,
             image: './src/images/5Dots.png',
-            description: 'Поможет успеть всё запланированное за день.'
+            description: 'Если планируете решать задачи в тренажёре, берите два.'
         },
         {
-            id: 'product-002',
+            id: generateUUID(),
             title: 'HEX-леденец',
             category: 'другое',
             price: 1450,
             image: './src/images/Леденец.png',
-            description: 'Лизните этот леденец, чтобы мгновенно запоминать и узнавать любой цветовой код CSS.'
+            description: 'Лизните этот леденец, чтобы мгновенно запоминать и узнавать любой цветовой код CSS.'
         },
         {
-            id: 'product-003',
+            id: generateUUID(),
             title: 'Мамка-таймер',
             category: 'софт-скил',
-            price: 750,
+            price: 2500,
             image: './src/images/Мамка-таймер.png',
-            description: 'Будет стоять над душой и не давать прокрастинировать.'
+            description: 'Будет стоять над душой и не давать прокрастинировать.'
         },
         {
-            id: 'product-004',
+            id: generateUUID(),
             title: 'Фреймворк куки судьбы',
             category: 'дополнительное',
             price: 2500,
             image: './src/images/Фреймворк.png',
-            description: 'Откройте эти куки, чтобы узнать, какой фреймворк вы должны изучить дальше.'
+            description: 'Откройте эти куки, чтобы узнать, какой фреймворк вы должны изучить дальше.'
         },
         {
-            id: 'product-005',
-            title: 'Кнопка "Замьютить кота"',
+            id: generateUUID(),
+            title: 'Кнопка «Замьютить кота»',
             category: 'кнопка',
-            price: 2000,
+            price: 1800,
             image: './src/images/Кнопка.png',
-            description: 'Если орёт кот, нажмите кнопку.'
+            description: 'Если орёт кот, нажмите кнопку.'
         },
         {
-            id: 'product-006',
+            id: generateUUID(),
             title: 'БЭМ-пилюлька',
             category: 'другое',
             price: 1500,
             image: './src/images/БЭМ.png',
-            description: 'Чтобы научиться правильно называть модификаторы, без этого не обойтись.'
+            description: 'Поможет успеть всё запланированное за день.'
         },
         {
-            id: 'product-007',
-            title: 'Портативный телепорт',
+            id: generateUUID(),
+            title: 'Портативный телепор',
             category: 'другое',
             price: 100000,
             image: './src/images/Телепорт.png',
-            description: 'Измените локацию для поиска работы.'
+            description: 'Измените локацию для поиска работы.'
         },
         {
-            id: 'product-008',
+            id: generateUUID(),
             title: 'Микровселенная в кармане',
             category: 'другое',
             price: 150000,
             image: './src/images/Микровселенная.png',
-            description: 'Даст время для изучения React, ООП и бэкенда'
+            description: 'Даст время для изучения React, ООП и бэкенда.'
         },
         {
-            id: 'product-009',
+            id: generateUUID(),
             title: 'UI/UX-карандаш',
             category: 'хард-скил',
             price: 10000,
             image: './src/images/Карандаш.png',
-            description: 'Очень полезный навык для фронтендера. Без шуток.'
+            description: 'Очень полезный навык для фронтендера.'
         },
         {
-            id: 'product-010',
+            id: generateUUID(),
             title: 'Бэкенд-антистресс',
             category: 'другое',
             price: 1000,
             image: './src/images/антистресс.png',
-            description: 'Сжимайте мячик, чтобы снизить стресс от тем по бэкенду.'
+            description: 'Сжимайте мячик, чтобы снизить стресс от тем по бэкенду.'
         },
     ];
 
-    console.log(`🛒 Начинаем создание ${products.length} карточек каталога...`);
-    productManager.createCatalogCards(products);
-    console.log('✅ Карточки каталога успешно созданы и добавлены на страницу!');
-
-    // Открытие корзины по клику на иконку корзины в шапке
-    const basketIcon = document.querySelector('.header__basket')
-    if (basketIcon) {
-        basketIcon.addEventListener('click', () => {
-            console.log('🛒 Открываем корзину в модальном окне');
-            productManager.openBasket()
-        });
-    }
-
-    console.log('✅ Приложение инициализировано успешно')
-    console.log('🛒 В каталоге отображено', products.length, 'товаров')
-})
+    console.log(`📦 Загружено ${products.length} товаров для отображения`);
+    
+    // Создаем карточки товаров
+    presenter.createCatalogCards(products);
+    
+    console.log('✅ Приложение успешно инициализировано');
+    console.log('🖱️ Интерфейс готов к использованию');
+    
+    // Добавляем глобальную переменную для отладки
+    (window as any).presenter = presenter;
+    console.log('🐛 Для отладки: window.presenter доступен в консоли');
+});

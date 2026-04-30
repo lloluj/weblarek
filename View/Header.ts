@@ -11,7 +11,8 @@ export class Header extends Component<IHeader> {
     protected counterElement: HTMLElement;
     protected basketButton: HTMLButtonElement;
 
-    constructor(protected events: IEvents, container:HTMLElement) {
+    // Делаем конструктор публичным
+    public constructor(protected events: IEvents, container:HTMLElement) {
         super(container)
         this.counterElement = ensureElement<HTMLElement>('.header__basket-counter',this.container)
         this.basketButton = ensureElement<HTMLButtonElement>('.header__basket',this.container)
@@ -24,10 +25,18 @@ export class Header extends Component<IHeader> {
     set counter(value:number) {
         this.counterElement.textContent = String(value)
     }
+    
     updateCounter(count: number): void {
         if (this.counterElement) {
             this.counterElement.textContent = String(count);
             console.log('🔄 Счетчик корзины обновлен:', count);
         }
+    }
+    
+    render(data?: Partial<IHeader>): HTMLElement {
+        if (data?.counter !== undefined) {
+            this.counter = data.counter;
+        }
+        return this.container;
     }
 }
