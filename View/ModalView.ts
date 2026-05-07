@@ -4,6 +4,7 @@ export class ModalView {
 
     constructor(modalElement: HTMLElement) {
         this.modalElement = modalElement;
+        // Поиск элементов только внутри контейнера
         this.contentContainer = modalElement.querySelector('.modal__content') as HTMLElement;
         
         const closeButton = modalElement.querySelector('.modal__close');
@@ -19,7 +20,6 @@ export class ModalView {
     }
 
     open(content: HTMLElement): void {
-        console.log('📱 Открываем модальное окно');
         this.contentContainer.innerHTML = '';
         this.contentContainer.appendChild(content);
         this.modalElement.style.display = 'flex';
@@ -27,7 +27,6 @@ export class ModalView {
     }
 
     close(): void {
-        console.log('📱 Закрываем модальное окно');
         this.modalElement.style.display = 'none';
         this.modalElement.classList.remove('modal_active');
         

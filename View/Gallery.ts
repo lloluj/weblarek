@@ -2,7 +2,7 @@ import { Component } from '../src/components/base/Component';
 import { IEvents } from '../src/components/base/Events';
 
 interface IGalleryData {
-    catalog: HTMLElement[];  // свойство называется catalog
+    cards: HTMLElement[];
 }
 
 export class Gallery extends Component<IGalleryData> {
@@ -20,8 +20,8 @@ export class Gallery extends Component<IGalleryData> {
     }
     
     render(data?: Partial<IGalleryData>): HTMLElement {
-        if (data?.catalog) {
-            this.setCatalog(data.catalog);
+        if (data?.cards) {
+            this.setCatalog(data.cards);
         }
         return this.container;
     }

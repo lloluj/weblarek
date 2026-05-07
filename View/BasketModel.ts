@@ -1,31 +1,33 @@
 import { IProduct } from './ProductModel';
+import { IEvents } from '../src/components/base/Events';
 
 export class BasketModel {
     private items: Map<string, IProduct> = new Map();
+    private events: IEvents;
+
+    constructor(events: IEvents) {
+        this.events = events;
+    }
 
     addItem(product: IProduct): boolean {
-        console.log('📦 BasketModel.addItem:', product.title, product.id);
         if (this.items.has(product.id)) {
-            console.log('⚠️ Товар уже в корзине');
             return false;
         }
         this.items.set(product.id, product);
-        console.log('✅ Товар добавлен. Всего товаров:', this.items.size);
-        console.log('📋 Текущие товары:', Array.from(this.items.values()).map(p => p.title));
+        this.events.emit('model:basket:changed', { items: this.getItems() });
         return true;
     }
 
     removeItem(id: string): boolean {
-        console.log('🗑️ BasketModel.removeItem, id:', id);
         const deleted = this.items.delete(id);
-        console.log('🗑️ Результат удаления:', deleted);
+        if (deleted) {
+            this.events.emit('model:basket:changed', { items: this.getItems() });
+        }
         return deleted;
     }
 
     getItems(): IProduct[] {
-        const items = Array.from(this.items.values());
-        console.log('📋 BasketModel.getItems, количество:', items.length);
-        return items;
+        return Array.from(this.items.values());
     }
 
     getItemCount(): number {
@@ -33,14 +35,12 @@ export class BasketModel {
     }
 
     getTotalPrice(): number {
-        const total = this.getItems().reduce((sum, item) => sum + item.price, 0);
-        console.log('💰 Общая сумма:', total);
-        return total;
+        return this.getItems().reduce((sum, item) => sum + item.price, 0);
     }
 
     clear(): void {
-        console.log('🧹 Очистка корзины');
         this.items.clear();
+        this.events.emit('model:basket:changed', { items: [] });
     }
 
     hasItem(id: string): boolean {

@@ -288,6 +288,7 @@ apiService.getProducts()
 
 import { AppPresenter } from '../View/AppPresenter';
 
+
 interface ProductData {
     id: string;
     title: string;
@@ -332,18 +333,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // СКРЫВАЕМ корзину программно
+    // Скрываем корзину
     basketElement.style.display = 'none';
     document.body.appendChild(basketElement);
-    console.log('✅ Элемент корзины добавлен в DOM и скрыт');
 
-    // Получаем шаблоны форм
+    // Получаем шаблоны
     const orderTemplate = document.getElementById('order') as HTMLTemplateElement;
     const contactsTemplate = document.getElementById('contacts') as HTMLTemplateElement;
     const successTemplate = document.getElementById('success') as HTMLTemplateElement;
+    const previewTemplate = document.getElementById('card-preview') as HTMLTemplateElement;
 
-    if (!orderTemplate || !contactsTemplate || !successTemplate) {
-        console.error('❌ Не найдены шаблоны форм');
+    if (!orderTemplate || !contactsTemplate || !successTemplate || !previewTemplate) {
+        console.error('❌ Не найдены шаблоны');
         return;
     }
 
@@ -355,7 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
         basketElement,
         orderTemplate,
         contactsTemplate,
-        successTemplate
+        successTemplate,
+        previewTemplate
     );
 
     const products: ProductData[] = [

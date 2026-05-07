@@ -18,16 +18,10 @@ export class BasketView {
     constructor(events: IEvents, container: HTMLElement) {
         this.events = events;
         this.container = container;
+        // Поиск элементов только внутри контейнера
         this.listElement = container.querySelector('.basket__list') as HTMLElement;
         this.priceElement = container.querySelector('.basket__price') as HTMLElement;
         this.buttonElement = container.querySelector('.basket__button') as HTMLElement;
-        
-        console.log('🛒 BasketView конструктор:', {
-            container: !!container,
-            listElement: !!this.listElement,
-            priceElement: !!this.priceElement,
-            buttonElement: !!this.buttonElement
-        });
         
         this.buttonElement.addEventListener('click', () => this.onCheckout?.());
     }
@@ -41,16 +35,7 @@ export class BasketView {
     }
 
     render(data: IBasketData): void {
-        console.log('🛒 BasketView.render вызван:', {
-            itemsCount: data.items.length,
-            total: data.total,
-            items: data.items
-        });
-        
-        if (!this.listElement) {
-            console.error('❌ listElement не найден');
-            return;
-        }
+        if (!this.listElement) return;
         
         this.listElement.innerHTML = '';
         
@@ -60,16 +45,13 @@ export class BasketView {
             emptyMessage.style.textAlign = 'center';
             emptyMessage.style.padding = '20px';
             this.listElement.appendChild(emptyMessage);
-            console.log('🛒 Корзина пуста');
         } else {
             data.items.forEach((product, index) => {
-                console.log(`🛒 Создаем элемент ${index + 1}:`, product.title);
                 const item = this.createBasketItem(product, index + 1);
                 if (item) {
                     this.listElement.appendChild(item);
                 }
             });
-            console.log(`🛒 Добавлено ${data.items.length} товаров`);
         }
         
         if (this.priceElement) {
@@ -85,9 +67,7 @@ export class BasketView {
         if (template) {
             const fragment = document.importNode(template.content, true);
             itemElement = fragment.firstElementChild as HTMLElement;
-            console.log('🛒 Используем шаблон card-basket');
         } else {
-            console.warn('🛒 Шаблон card-basket не найден, создаем вручную');
             itemElement = document.createElement('li');
             itemElement.className = 'basket__item';
             itemElement.innerHTML = `
