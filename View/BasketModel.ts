@@ -4,9 +4,9 @@ export class BasketModel {
     private items: Map<string, IProduct> = new Map();
 
     addItem(product: IProduct): boolean {
-        console.log('📦 BasketModel.addItem:', product.title);
+        console.log('📦 BasketModel.addItem:', product.title, product.id);
         if (this.items.has(product.id)) {
-            console.log('⚠️ Товар уже в корзине:', product.title);
+            console.log('⚠️ Товар уже в корзине');
             return false;
         }
         this.items.set(product.id, product);

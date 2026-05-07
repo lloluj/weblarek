@@ -1,23 +1,24 @@
-import { BaseView } from './BaseView';
+// import { BaseView } from './BaseView';
+// import { IEvents } from '../src/components/base/Events';
 
-export class HeaderView extends BaseView<number> {
-    private counterElement: HTMLElement;
-    private basketButton: HTMLButtonElement;
-    private onBasketOpen?: () => void;
+// export class HeaderView extends BaseView<number> {
+//     private counterElement: HTMLElement;
+//     private basketButton: HTMLButtonElement;
+//     private events: IEvents;
 
-    constructor(container: HTMLElement) {
-        super(container);
-        this.counterElement = container.querySelector('.header__basket-counter') as HTMLElement;
-        this.basketButton = container.querySelector('.header__basket') as HTMLButtonElement;
+//     constructor(events: IEvents, container: HTMLElement) {
+//         super(container);
+//         this.events = events;
+//         // Поиск элементов только внутри контейнера
+//         this.counterElement = container.querySelector('.header__basket-counter') as HTMLElement;
+//         this.basketButton = container.querySelector('.header__basket') as HTMLButtonElement;
         
-        this.basketButton.addEventListener('click', () => this.onBasketOpen?.());
-    }
+//         this.basketButton.addEventListener('click', () => {
+//             this.events.emit('basket:open');
+//         });
+//     }
 
-    setOnBasketOpen(callback: () => void): void {
-        this.onBasketOpen = callback;
-    }
-
-    render(count: number): void {
-        this.counterElement.textContent = String(count);
-    }
-}
+//     render(count: number): void {
+//         this.counterElement.textContent = String(count);
+//     }
+// }

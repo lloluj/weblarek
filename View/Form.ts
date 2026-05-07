@@ -8,6 +8,7 @@ export abstract class Form<T> extends Component<T> {
 
     protected constructor(container: HTMLElement) {
         super(container);
+        // Поиск элементов только внутри контейнера
         this.submitButton = ensureElement<HTMLButtonElement>('.button', this.container);
         this.errorsElement = ensureElement<HTMLElement>('.form__errors', this.container);
     }

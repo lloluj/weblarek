@@ -1,18 +1,27 @@
-import {Component} from '../src/components/base/Component'
+import { Component } from '../src/components/base/Component';
+import { IEvents } from '../src/components/base/Events';
 
 interface IGalleryData {
-    cards: HTMLElement[];
+    catalog: HTMLElement[];  // свойство называется catalog
 }
 
 export class Gallery extends Component<IGalleryData> {
-    // Делаем конструктор публичным
-    public constructor(container: HTMLElement) {
-        super(container)
+    private catalogElement: HTMLElement;
+    private events: IEvents;
+
+    public constructor(events: IEvents, container: HTMLElement) {
+        super(container);
+        this.events = events;
+        this.catalogElement = this.container;
+    }
+    
+    setCatalog(items: HTMLElement[]): void {
+        this.catalogElement.replaceChildren(...items);
     }
     
     render(data?: Partial<IGalleryData>): HTMLElement {
-        if (data?.cards) {
-            this.container.replaceChildren(...data.cards);
+        if (data?.catalog) {
+            this.setCatalog(data.catalog);
         }
         return this.container;
     }

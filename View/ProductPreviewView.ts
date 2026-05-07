@@ -1,19 +1,21 @@
 import { IProduct } from './ProductModel';
+import { IEvents } from '../src/components/base/Events';
 
 export class ProductPreviewView {
+    private events: IEvents;
     private onAddToBasket?: (product: IProduct) => void;
 
+    constructor(events: IEvents) {
+        this.events = events;
+    }
+
     setOnAddToBasket(callback: (product: IProduct) => void): void {
-        console.log('🔗 Установлен callback добавления в корзину');
         this.onAddToBasket = callback;
     }
 
     render(product: IProduct): HTMLElement {
-        console.log('🎨 Рендер превью товара:', product.title);
-        
         const template = document.getElementById('card-preview') as HTMLTemplateElement;
         if (!template) {
-            console.error('❌ Шаблон card-preview не найден');
             const fallback = document.createElement('div');
             fallback.textContent = product.title;
             return fallback;
@@ -35,18 +37,17 @@ export class ProductPreviewView {
         if (textElement) textElement.textContent = product.description;
         if (priceElement) priceElement.textContent = `${product.price} синапсов`;
 
-        // Создаем новую кнопку вместо старой, чтобы избежать дублирования обработчиков
         const addButton = buttonElement?.cloneNode(true) as HTMLElement;
         if (buttonElement && addButton) {
             buttonElement.parentNode?.replaceChild(addButton, buttonElement);
             
             addButton.addEventListener('click', (e) => {
                 e.stopPropagation();
-                console.log('🛒 Кнопка "В корзину" нажата для товара:', product.title);
+                // Добавляем товар в корзину
                 this.onAddToBasket?.(product);
+                // Закрываем модальное окно
+                this.events.emit('modal:close');
             });
-        } else {
-            console.warn('⚠️ Кнопка "В корзину" не найдена в шаблоне');
         }
 
         return previewElement;

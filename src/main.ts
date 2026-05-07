@@ -288,8 +288,6 @@ apiService.getProducts()
 
 import { AppPresenter } from '../View/AppPresenter';
 
-
-
 interface ProductData {
     id: string;
     title: string;
@@ -299,7 +297,6 @@ interface ProductData {
     description: string;
 }
 
-// Функция для генерации UUID
 function generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         const r = Math.random() * 16 | 0;
@@ -311,29 +308,19 @@ function generateUUID(): string {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🔎 Инициализация приложения...');
 
-    // Получаем DOM элементы
     const headerElement = document.querySelector('.header') as HTMLElement;
     const galleryElement = document.querySelector('.gallery') as HTMLElement;
     const modalElement = document.getElementById('modal-container') as HTMLElement;
 
-    // Проверяем наличие необходимых элементов
-    if (!headerElement) {
-        console.error('❌ Элемент .header не найден');
-        return;
-    }
-    if (!galleryElement) {
-        console.error('❌ Элемент .gallery не найден');
-        return;
-    }
-    if (!modalElement) {
-        console.error('❌ Элемент #modal-container не найден');
+    if (!headerElement || !galleryElement || !modalElement) {
+        console.error('❌ Не найдены необходимые элементы DOM');
         return;
     }
 
     // Создаем корзину из шаблона
     const basketTemplate = document.getElementById('basket') as HTMLTemplateElement;
     if (!basketTemplate) {
-        console.error('❌ Шаблон #basket не найден в HTML');
+        console.error('❌ Шаблон #basket не найден');
         return;
     }
     
@@ -341,30 +328,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const basketElement = basketFragment.firstElementChild as HTMLElement;
     
     if (!basketElement) {
-        console.error('❌ Не удалось создать элемент корзины из шаблона');
+        console.error('❌ Не удалось создать элемент корзины');
         return;
     }
     
-    // НЕ скрываем корзину, так как она будет отображаться в модальном окне
-    // Просто добавляем в DOM
+    // СКРЫВАЕМ корзину программно
+    basketElement.style.display = 'none';
     document.body.appendChild(basketElement);
-    console.log('✅ Элемент корзины добавлен в DOM');
+    console.log('✅ Элемент корзины добавлен в DOM и скрыт');
 
     // Получаем шаблоны форм
     const orderTemplate = document.getElementById('order') as HTMLTemplateElement;
     const contactsTemplate = document.getElementById('contacts') as HTMLTemplateElement;
     const successTemplate = document.getElementById('success') as HTMLTemplateElement;
 
-    if (!orderTemplate) {
-        console.error('❌ Шаблон #order не найден');
-        return;
-    }
-    if (!contactsTemplate) {
-        console.error('❌ Шаблон #contacts не найден');
-        return;
-    }
-    if (!successTemplate) {
-        console.error('❌ Шаблон #success не найден');
+    if (!orderTemplate || !contactsTemplate || !successTemplate) {
+        console.error('❌ Не найдены шаблоны форм');
         return;
     }
 
@@ -379,7 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
         successTemplate
     );
 
-    // Массив товаров для отображения
     const products: ProductData[] = [
         {
             id: generateUUID(),
@@ -431,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             id: generateUUID(),
-            title: 'Портативный телепор',
+            title: 'Портативный телепорт',
             category: 'другое',
             price: 100000,
             image: './src/images/Телепорт.png',
@@ -460,18 +438,11 @@ document.addEventListener('DOMContentLoaded', () => {
             price: 1000,
             image: './src/images/антистресс.png',
             description: 'Сжимайте мячик, чтобы снизить стресс от тем по бэкенду.'
-        },
+        }
     ];
 
-    console.log(`📦 Загружено ${products.length} товаров для отображения`);
-    
-    // Создаем карточки товаров
+    console.log(`📦 Загружено ${products.length} товаров`);
     presenter.createCatalogCards(products);
     
-    console.log('✅ Приложение успешно инициализировано');
-    console.log('🖱️ Интерфейс готов к использованию');
-    
-    // Добавляем глобальную переменную для отладки
     (window as any).presenter = presenter;
-    console.log('🐛 Для отладки: window.presenter доступен в консоли');
 });

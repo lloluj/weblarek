@@ -15,7 +15,6 @@ export class ModalView {
             if (event.target === modalElement) this.close();
         });
         
-        // Скрываем модальное окно при инициализации
         this.modalElement.style.display = 'none';
     }
 
@@ -31,6 +30,14 @@ export class ModalView {
         console.log('📱 Закрываем модальное окно');
         this.modalElement.style.display = 'none';
         this.modalElement.classList.remove('modal_active');
+        
+        // Скрываем корзину при закрытии
+        const basketElement = this.contentContainer.querySelector('.basket');
+        if (basketElement) {
+            (basketElement as HTMLElement).style.display = 'none';
+        }
+        
+        this.contentContainer.innerHTML = '';
     }
 
     isOpen(): boolean {

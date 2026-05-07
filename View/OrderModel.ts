@@ -38,6 +38,7 @@ export class OrderModel {
         return { ...this.data };
     }
 
+    // Валидация полей заказа
     validateOrder(): IOrderValidation {
         const errors: string[] = [];
         if (!this.data.payment) errors.push('Выберите способ оплаты');
@@ -48,6 +49,7 @@ export class OrderModel {
         };
     }
 
+    // Валидация контактов
     validateContacts(): IOrderValidation {
         const errors: string[] = [];
         if (!this.data.email.trim() || !this.data.email.includes('@')) {

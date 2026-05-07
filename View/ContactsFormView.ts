@@ -1,7 +1,5 @@
 import { Form } from './Form';
-
-
-
+import { IEvents } from '../src/components/base/Events';
 
 interface ContactsData {
     email: string;
@@ -11,11 +9,14 @@ interface ContactsData {
 export class ContactsFormView extends Form<ContactsData> {
     private emailInput: HTMLInputElement;
     private phoneInput: HTMLInputElement;
+    private events: IEvents;
     private onSubmit?: (data: { email: string; phone: string }) => void;
 
-    constructor(container: HTMLElement) {
+    constructor(events: IEvents, container: HTMLElement) {
         super(container);
+        this.events = events;
         
+        // Поиск элементов только внутри контейнера
         this.emailInput = this.container.querySelector('input[name="email"]') as HTMLInputElement;
         this.phoneInput = this.container.querySelector('input[name="phone"]') as HTMLInputElement;
         

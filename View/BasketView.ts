@@ -1,6 +1,5 @@
 import { IProduct } from './ProductModel';
-
-
+import { IEvents } from '../src/components/base/Events';
 
 interface IBasketData {
     items: IProduct[];
@@ -12,23 +11,28 @@ export class BasketView {
     private listElement: HTMLElement;
     private priceElement: HTMLElement;
     private buttonElement: HTMLElement;
-    private onRemove?: (id: string) => void;
+    private events: IEvents;
+    private onRemove?: (data: { id: string }) => void;
     private onCheckout?: () => void;
 
-    constructor(container: HTMLElement) {
+    constructor(events: IEvents, container: HTMLElement) {
+        this.events = events;
         this.container = container;
         this.listElement = container.querySelector('.basket__list') as HTMLElement;
         this.priceElement = container.querySelector('.basket__price') as HTMLElement;
         this.buttonElement = container.querySelector('.basket__button') as HTMLElement;
         
-        console.log('🛒 BasketView инициализирован');
-        console.log('🛒 container:', this.container);
-        console.log('🛒 listElement:', this.listElement);
+        console.log('🛒 BasketView конструктор:', {
+            container: !!container,
+            listElement: !!this.listElement,
+            priceElement: !!this.priceElement,
+            buttonElement: !!this.buttonElement
+        });
         
         this.buttonElement.addEventListener('click', () => this.onCheckout?.());
     }
 
-    setOnRemove(callback: (id: string) => void): void {
+    setOnRemove(callback: (data: { id: string }) => void): void {
         this.onRemove = callback;
     }
 
@@ -37,9 +41,11 @@ export class BasketView {
     }
 
     render(data: IBasketData): void {
-        console.log('🛒 BasketView.render вызван');
-        console.log('🛒 Получено товаров:', data.items.length);
-        console.log('🛒 Товары:', data.items);
+        console.log('🛒 BasketView.render вызван:', {
+            itemsCount: data.items.length,
+            total: data.total,
+            items: data.items
+        });
         
         if (!this.listElement) {
             console.error('❌ listElement не найден');
@@ -54,22 +60,21 @@ export class BasketView {
             emptyMessage.style.textAlign = 'center';
             emptyMessage.style.padding = '20px';
             this.listElement.appendChild(emptyMessage);
-            console.log('🛒 Показано сообщение о пустой корзине');
+            console.log('🛒 Корзина пуста');
         } else {
             data.items.forEach((product, index) => {
+                console.log(`🛒 Создаем элемент ${index + 1}:`, product.title);
                 const item = this.createBasketItem(product, index + 1);
                 if (item) {
                     this.listElement.appendChild(item);
-                    console.log(`✅ Добавлен товар: ${product.title}`);
                 }
             });
+            console.log(`🛒 Добавлено ${data.items.length} товаров`);
         }
         
         if (this.priceElement) {
             this.priceElement.textContent = `${data.total} синапсов`;
         }
-        
-        console.log('🛒 Всего элементов в списке:', this.listElement.children.length);
     }
 
     private createBasketItem(product: IProduct, index: number): HTMLElement | null {
@@ -80,8 +85,9 @@ export class BasketView {
         if (template) {
             const fragment = document.importNode(template.content, true);
             itemElement = fragment.firstElementChild as HTMLElement;
+            console.log('🛒 Используем шаблон card-basket');
         } else {
-            // Fallback если шаблон не найден
+            console.warn('🛒 Шаблон card-basket не найден, создаем вручную');
             itemElement = document.createElement('li');
             itemElement.className = 'basket__item';
             itemElement.innerHTML = `
@@ -108,7 +114,7 @@ export class BasketView {
         if (deleteBtn) {
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.onRemove?.(product.id);
+                this.onRemove?.({ id: product.id });
             });
         }
         
