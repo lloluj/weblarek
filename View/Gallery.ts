@@ -1,5 +1,7 @@
 import { Component } from '../src/components/base/Component';
 import { IEvents } from '../src/components/base/Events';
+import { IProduct } from './ProductModel';
+import { CatalogCard } from './CatalogCard';
 
 interface IGalleryData {
     cards: HTMLElement[];
@@ -24,5 +26,16 @@ export class Gallery extends Component<IGalleryData> {
             this.setCatalog(data.cards);
         }
         return this.container;
+    }
+    
+    createCard(product: IProduct): HTMLElement | null {
+        const card = new CatalogCard(this.events, product);
+        const cardElement = card.render();
+        
+        cardElement.addEventListener('click', () => {
+            this.events.emit('product:preview', product);
+        });
+        
+        return cardElement;
     }
 }

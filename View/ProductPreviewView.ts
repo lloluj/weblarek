@@ -1,5 +1,6 @@
 import { IProduct } from './ProductModel';
 import { IEvents } from '../src/components/base/Events';
+import { PreviewCard } from './PreviewCard';
 
 export class ProductPreviewView {
     private events: IEvents;
@@ -16,32 +17,16 @@ export class ProductPreviewView {
     }
 
     render(product: IProduct): HTMLElement {
-        const fragment = document.importNode(this.template.content, true);
-        const previewElement = fragment.firstElementChild as HTMLElement;
-
-        const imageElement = previewElement.querySelector('.card__image');
-        const categoryElement = previewElement.querySelector('.card__category');
-        const titleElement = previewElement.querySelector('.card__title');
-        const textElement = previewElement.querySelector('.card__text');
-        const priceElement = previewElement.querySelector('.card__price');
-        const buttonElement = previewElement.querySelector('.card__button');
-
-        if (imageElement) imageElement.setAttribute('src', product.image);
-        if (categoryElement) categoryElement.textContent = product.category;
-        if (titleElement) titleElement.textContent = product.title;
-        if (textElement) textElement.textContent = product.description;
-        if (priceElement) priceElement.textContent = `${product.price} синапсов`;
-
-        const addButton = buttonElement?.cloneNode(true) as HTMLElement;
-        if (buttonElement && addButton) {
-            buttonElement.parentNode?.replaceChild(addButton, buttonElement);
-            
-            addButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.onAddToBasket?.(product);
-            });
-        }
-
-        return previewElement;
+        const card = new PreviewCard(this.events, this.template, product);
+        
+        // Устанавливаем обработчик на кнопку "В корзину"
+        card.setOnAddToBasket(() => {
+            console.log('🛒 Нажата кнопка "В корзину" для:', product.title);
+            if (this.onAddToBasket) {
+                this.onAddToBasket(product);
+            }
+        });
+        
+        return card.render();
     }
 }

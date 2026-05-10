@@ -1,3 +1,4 @@
+
 import { IEvents } from '../src/components/base/Events';
 
 interface ISuccessData {
@@ -13,7 +14,6 @@ export class SuccessView {
     constructor(events: IEvents, container: HTMLElement) {
         this.events = events;
         this.container = container;
-        // Поиск элементов только внутри контейнера
         this.closeButton = container.querySelector('.order-success__close') as HTMLButtonElement;
         this.descriptionElement = container.querySelector('.order-success__description') as HTMLElement;
         

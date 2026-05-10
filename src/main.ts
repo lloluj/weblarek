@@ -287,17 +287,6 @@ apiService.getProducts()
 
 
 import { AppPresenter } from '../View/AppPresenter';
-
-
-interface ProductData {
-    id: string;
-    title: string;
-    category: string;
-    price: number;
-    image: string;
-    description: string;
-}
-
 function generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         const r = Math.random() * 16 | 0;
@@ -318,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Создаем корзину из шаблона
     const basketTemplate = document.getElementById('basket') as HTMLTemplateElement;
     if (!basketTemplate) {
         console.error('❌ Шаблон #basket не найден');
@@ -333,11 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // Скрываем корзину
     basketElement.style.display = 'none';
     document.body.appendChild(basketElement);
 
-    // Получаем шаблоны
     const orderTemplate = document.getElementById('order') as HTMLTemplateElement;
     const contactsTemplate = document.getElementById('contacts') as HTMLTemplateElement;
     const successTemplate = document.getElementById('success') as HTMLTemplateElement;
@@ -348,7 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Создаем презентер
     const presenter = new AppPresenter(
         headerElement,
         galleryElement,
@@ -360,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewTemplate
     );
 
-    const products: ProductData[] = [
+    const products = [
         {
             id: generateUUID(),
             title: '+1 час в сутках',

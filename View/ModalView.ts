@@ -4,8 +4,12 @@ export class ModalView {
 
     constructor(modalElement: HTMLElement) {
         this.modalElement = modalElement;
-        // Поиск элементов только внутри контейнера
-        this.contentContainer = modalElement.querySelector('.modal__content') as HTMLElement;
+        this.contentContainer = modalElement.querySelector('.modal__container') as HTMLElement;
+        
+        console.log('📱 ModalView конструктор:', {
+            modalElement: !!modalElement,
+            contentContainer: !!this.contentContainer
+        });
         
         const closeButton = modalElement.querySelector('.modal__close');
         if (closeButton) {
@@ -16,30 +20,42 @@ export class ModalView {
             if (event.target === modalElement) this.close();
         });
         
-        this.modalElement.style.display = 'none';
+        this.modalElement.classList.remove('modal_active');
     }
 
     open(content: HTMLElement): void {
+        console.log('📱 Открываем модальное окно');
+        console.log('📱 Контент для отображения:', content);
+        
+        if (!this.contentContainer) {
+            console.error('❌ contentContainer не найден!');
+            return;
+        }
+        
         this.contentContainer.innerHTML = '';
+        
+        // Принудительно показываем контент, если он скрыт
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            console.log('📱 Принудительно показали скрытый контент');
+        }
+        
         this.contentContainer.appendChild(content);
-        this.modalElement.style.display = 'flex';
+        
+        console.log('📱 После добавления контента, contentContainer.innerHTML:', this.contentContainer.innerHTML);
+        
         this.modalElement.classList.add('modal_active');
+        
+        console.log('📱 Модальное окно открыто');
     }
 
     close(): void {
-        this.modalElement.style.display = 'none';
+        console.log('📱 Закрываем модальное окно');
         this.modalElement.classList.remove('modal_active');
-        
-        // Скрываем корзину при закрытии
-        const basketElement = this.contentContainer.querySelector('.basket');
-        if (basketElement) {
-            (basketElement as HTMLElement).style.display = 'none';
-        }
-        
         this.contentContainer.innerHTML = '';
     }
 
     isOpen(): boolean {
-        return this.modalElement.style.display === 'flex';
+        return this.modalElement.classList.contains('modal_active');
     }
 }

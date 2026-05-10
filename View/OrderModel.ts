@@ -1,3 +1,6 @@
+
+import { IEvents } from '../src/components/base/Events';
+
 export interface IOrderData {
     payment: 'card' | 'cash' | null;
     address: string;
@@ -17,21 +20,30 @@ export class OrderModel {
         email: '',
         phone: ''
     };
+    private events: IEvents;
+
+    constructor(events: IEvents) {
+        this.events = events;
+    }
 
     setPayment(payment: 'card' | 'cash'): void {
         this.data.payment = payment;
+        this.events.emit('buyer:changed', { field: 'payment', value: payment });
     }
 
     setAddress(address: string): void {
         this.data.address = address;
+        this.events.emit('buyer:changed', { field: 'address', value: address });
     }
 
     setEmail(email: string): void {
         this.data.email = email;
+        this.events.emit('buyer:changed', { field: 'email', value: email });
     }
 
     setPhone(phone: string): void {
         this.data.phone = phone;
+        this.events.emit('buyer:changed', { field: 'phone', value: phone });
     }
 
     getOrderData(): IOrderData {
@@ -67,5 +79,6 @@ export class OrderModel {
             email: '',
             phone: ''
         };
+        this.events.emit('buyer:changed', { reset: true });
     }
 }

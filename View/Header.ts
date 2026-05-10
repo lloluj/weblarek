@@ -1,6 +1,7 @@
 import { ensureElement } from '../src/utils/utils';
 import { Component } from '../src/components/base/Component';
 import { IEvents } from '../src/components/base/Events';
+import { IProduct } from './ProductModel';
 
 interface IHeader {
     counter: number;
@@ -14,7 +15,6 @@ export class Header extends Component<IHeader> {
     public constructor(events: IEvents, container: HTMLElement) {
         super(container);
         this.events = events;
-        // Поиск элементов только внутри контейнера
         this.counterElement = ensureElement<HTMLElement>('.header__basket-counter', this.container);
         this.basketButton = ensureElement<HTMLButtonElement>('.header__basket', this.container);
 

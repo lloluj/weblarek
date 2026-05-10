@@ -1,5 +1,7 @@
 import { ensureElement } from '../src/utils/utils';
 import { Component } from '../src/components/base/Component';
+import { IEvents } from '../src/components/base/Events';
+import { IProduct } from './ProductModel';
 
 export abstract class Form<T> extends Component<T> {
     protected submitButton: HTMLButtonElement;
@@ -8,18 +10,29 @@ export abstract class Form<T> extends Component<T> {
 
     protected constructor(container: HTMLElement) {
         super(container);
-        // Поиск элементов только внутри контейнера
-        this.submitButton = ensureElement<HTMLButtonElement>('.button', this.container);
-        this.errorsElement = ensureElement<HTMLElement>('.form__errors', this.container);
+        // Ищем кнопку с классом .button (для формы контактов это кнопка "Оплатить")
+        this.submitButton = container.querySelector('.button:not(.button_alt)') as HTMLButtonElement;
+        this.errorsElement = container.querySelector('.form__errors') as HTMLElement;
+        
+        console.log('📝 Form конструктор:', {
+            submitButton: this.submitButton,
+            errorsElement: this.errorsElement
+        });
     }
 
     setErrors(errors: string[]): void {
-        this.errorsElement.textContent = errors.join(', ');
+        if (this.errorsElement) {
+            this.errorsElement.textContent = errors.join(', ');
+            console.log('❌ Ошибки формы:', errors.join(', '));
+        }
     }
 
     setValid(isValid: boolean): void {
         this.isValidFlag = isValid;
-        this.submitButton.disabled = !isValid;
+        if (this.submitButton) {
+            this.submitButton.disabled = !isValid;
+            console.log('🔘 Кнопка формы:', this.submitButton.disabled ? 'заблокирована' : 'активна');
+        }
     }
     
     isValid(): boolean {

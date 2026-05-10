@@ -1,6 +1,5 @@
 import { IProduct } from './ProductModel';
 import { IEvents } from '../src/components/base/Events';
-
 export class BasketModel {
     private items: Map<string, IProduct> = new Map();
     private events: IEvents;

@@ -1,5 +1,7 @@
-import { IProduct } from './ProductModel';
+
 import { IEvents } from '../src/components/base/Events';
+import { IProduct } from './ProductModel';
+import { BasketCard } from './BasketCard';
 
 interface IBasketData {
     items: IProduct[];
@@ -10,32 +12,49 @@ export class BasketView {
     private container: HTMLElement;
     private listElement: HTMLElement;
     private priceElement: HTMLElement;
-    private buttonElement: HTMLElement;
+    private buttonElement: HTMLButtonElement;
     private events: IEvents;
-    private onRemove?: (data: { id: string }) => void;
-    private onCheckout?: () => void;
+    private onCheckoutCallback?: () => void;
 
     constructor(events: IEvents, container: HTMLElement) {
         this.events = events;
         this.container = container;
-        // Поиск элементов только внутри контейнера
         this.listElement = container.querySelector('.basket__list') as HTMLElement;
         this.priceElement = container.querySelector('.basket__price') as HTMLElement;
-        this.buttonElement = container.querySelector('.basket__button') as HTMLElement;
+        this.buttonElement = container.querySelector('.basket__button') as HTMLButtonElement;
         
-        this.buttonElement.addEventListener('click', () => this.onCheckout?.());
-    }
-
-    setOnRemove(callback: (data: { id: string }) => void): void {
-        this.onRemove = callback;
+        console.log('🛒 BasketView конструктор:', {
+            container: !!container,
+            listElement: !!this.listElement,
+            priceElement: !!this.priceElement,
+            buttonElement: !!this.buttonElement
+        });
+        
+        // Инициализируем обработчик кнопки
+        if (this.buttonElement) {
+            this.buttonElement.addEventListener('click', () => {
+                console.log('🖱️ Клик по кнопке "Оформить"');
+                if (this.onCheckoutCallback) {
+                    this.onCheckoutCallback();
+                } else {
+                    this.events.emit('order:start', {});
+                }
+            });
+        }
     }
 
     setOnCheckout(callback: () => void): void {
-        this.onCheckout = callback;
+        console.log('🔧 setOnCheckout вызван');
+        this.onCheckoutCallback = callback;
     }
 
     render(data: IBasketData): void {
-        if (!this.listElement) return;
+        console.log('🛒 BasketView.render, товаров:', data.items.length);
+        
+        if (!this.listElement) {
+            console.error('❌ listElement не найден!');
+            return;
+        }
         
         this.listElement.innerHTML = '';
         
@@ -45,60 +64,28 @@ export class BasketView {
             emptyMessage.style.textAlign = 'center';
             emptyMessage.style.padding = '20px';
             this.listElement.appendChild(emptyMessage);
+            
+            if (this.buttonElement) {
+                this.buttonElement.disabled = true;
+            }
         } else {
+            // Используем представление BasketCard для каждой карточки
             data.items.forEach((product, index) => {
-                const item = this.createBasketItem(product, index + 1);
-                if (item) {
-                    this.listElement.appendChild(item);
-                }
+                console.log(`🛒 Создаем карточку для: ${product.title}`);
+                const card = new BasketCard(this.events, product, index + 1);
+                this.listElement.appendChild(card.render());
             });
+            
+            if (this.buttonElement) {
+                this.buttonElement.disabled = false;
+            }
         }
         
         if (this.priceElement) {
             this.priceElement.textContent = `${data.total} синапсов`;
         }
-    }
-
-    private createBasketItem(product: IProduct, index: number): HTMLElement | null {
-        const template = document.getElementById('card-basket') as HTMLTemplateElement;
         
-        let itemElement: HTMLElement;
-        
-        if (template) {
-            const fragment = document.importNode(template.content, true);
-            itemElement = fragment.firstElementChild as HTMLElement;
-        } else {
-            itemElement = document.createElement('li');
-            itemElement.className = 'basket__item';
-            itemElement.innerHTML = `
-                <span class="basket__item-index"></span>
-                <span class="card__title"></span>
-                <span class="card__price"></span>
-                <button class="basket__item-delete">Удалить</button>
-            `;
-        }
-        
-        if (!itemElement) return null;
-        
-        itemElement.setAttribute('data-product-id', product.id);
-        
-        const indexSpan = itemElement.querySelector('.basket__item-index');
-        const titleSpan = itemElement.querySelector('.card__title');
-        const priceSpan = itemElement.querySelector('.card__price');
-        const deleteBtn = itemElement.querySelector('.basket__item-delete');
-        
-        if (indexSpan) indexSpan.textContent = String(index);
-        if (titleSpan) titleSpan.textContent = product.title;
-        if (priceSpan) priceSpan.textContent = `${product.price} синапсов`;
-        
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.onRemove?.({ id: product.id });
-            });
-        }
-        
-        return itemElement;
+        console.log('📦 После рендера, детей в списке:', this.listElement.children.length);
     }
 
     getContainer(): HTMLElement {
